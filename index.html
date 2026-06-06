@@ -1,42 +1,516 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplicación de Lista de Tareas</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resolución Ejercicios Neumáticos - Presentación Interactiva</title>
+<style>
+:root {
+  --dark-blue: #1a237e;
+  --accent-blue: #0082c4;
+  --light-blue: #e6f2ff;
+  --green: #008844;
+  --orange: #e65c00;
+  --white: #ffffff;
+  --dark-gray: #333333;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, var(--dark-blue) 0%, #0d1642 100%);
+  min-height: 100vh;
+  color: var(--white);
+  overflow-x: hidden;
+}
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+.header {
+  text-align: center;
+  padding: 40px 20px;
+  border-bottom: 3px solid var(--accent-blue);
+  margin-bottom: 30px;
+}
+.header h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+.header p {
+  font-size: 1.2rem;
+  color: #ccddff;
+  margin-top: 10px;
+}
+.nav-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+.nav-tab {
+  background: rgba(255,255,255,0.1);
+  border: 2px solid var(--accent-blue);
+  color: var(--white);
+  padding: 12px 24px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  font-weight: 600;
+}
+.nav-tab:hover, .nav-tab.active {
+  background: var(--accent-blue);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0,130,196,0.4);
+}
+.slide-content {
+  display: none;
+  animation: fadeIn 0.5s ease;
+}
+.slide-content.active {
+  display: block;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.card {
+  background: rgba(255,255,255,0.95);
+  border-radius: 16px;
+  padding: 30px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  color: var(--dark-gray);
+}
+.card-title {
+  color: var(--dark-blue);
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 3px solid var(--accent-blue);
+}
+.formula-box {
+  background: var(--light-blue);
+  border-left: 4px solid var(--accent-blue);
+  padding: 15px 20px;
+  margin: 15px 0;
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 1.1rem;
+  color: var(--dark-blue);
+}
+.result-box {
+  background: #e8f5e9;
+  border-left: 4px solid var(--green);
+  padding: 15px 20px;
+  margin: 15px 0;
+  border-radius: 8px;
+  font-weight: 700;
+  color: var(--green);
+  font-size: 1.1rem;
+}
+.conclusion-box {
+  background: #fff3e0;
+  border-left: 4px solid var(--orange);
+  padding: 15px 20px;
+  margin: 15px 0;
+  border-radius: 8px;
+  font-weight: 700;
+  color: var(--orange);
+  font-size: 1.1rem;
+}
+.data-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  margin: 20px 0;
+}
+.data-item {
+  background: var(--light-blue);
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid var(--accent-blue);
+}
+.data-item strong {
+  color: var(--dark-blue);
+  display: block;
+  margin-bottom: 5px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 0.95rem;
+}
+th {
+  background: var(--dark-blue);
+  color: var(--white);
+  padding: 12px;
+  text-align: left;
+}
+td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+tr:nth-child(even) {
+  background: var(--light-blue);
+}
+.step-number {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  background: var(--accent-blue);
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 32px;
+  font-weight: 700;
+  margin-right: 10px;
+}
+.footer {
+  text-align: center;
+  padding: 30px;
+  color: #8899bb;
+  font-size: 0.9rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  margin-top: 40px;
+}
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 4px;
+  background: var(--accent-blue);
+  transition: width 0.3s ease;
+  z-index: 1000;
+}
+.btn-download {
+  display: inline-block;
+  background: var(--green);
+  color: white;
+  padding: 12px 30px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 600;
+  margin: 20px 10px;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+.btn-download:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0,136,68,0.4);
+}
+.check-icon {
+  color: var(--green);
+  font-size: 1.3rem;
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="todo-app">
-            <h1>📋 Mi Lista de Tareas</h1>
-            
-            <div class="input-container">
-                <input 
-                    type="text" 
-                    id="taskInput" 
-                    class="task-input" 
-                    placeholder="Agregar una nueva tarea..."
-                    autocomplete="off"
-                >
-                <button id="addBtn" class="add-btn">Agregar</button>
-            </div>
+<div class="progress-bar" id="progressBar"></div>
+<div class="container">
+  <div class="header">
+    <h1>📘 Resolución de Ejercicios Propuestos</h1>
+    <p>Diseño de Sistemas Neumáticos para Automatización</p>
+    <div style="margin-top:20px;">
+      <button class="btn-download" onclick="printPresentation()">🖨 Imprimir</button>
+    </div>
+  </div>
 
-            <div class="filters">
-                <button class="filter-btn active" data-filter="all">Todas</button>
-                <button class="filter-btn" data-filter="active">Activas</button>
-                <button class="filter-btn" data-filter="completed">Completadas</button>
-            </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showSlide(0)">📋 Índice</button>
+    <button class="nav-tab" onclick="showSlide(1)">EP-01 Garra Paralela</button>
+    <button class="nav-tab" onclick="showSlide(2)">EP-02 Garra Angular</button>
+    <button class="nav-tab" onclick="showSlide(3)">EP-03 Mesa XY</button>
+    <button class="nav-tab" onclick="showSlide(4)">EP-04 Tiempo Ciclo</button>
+    <button class="nav-tab" onclick="showSlide(5)">EP-05 Sistema Completo</button>
+  </div>
 
-            <ul id="taskList" class="task-list"></ul>
-
-            <div class="stats">
-                <span id="taskCount">0 tareas pendientes</span>
-                <button id="clearBtn" class="clear-btn">Limpiar completadas</button>
-            </div>
+  <!-- SLIDE 0: INDICE -->
+  <div class="slide-content active" id="slide-0">
+    <div class="card">
+      <div class="card-title">📋 Contenido</div>
+      <div class="data-grid">
+        <div class="data-item">
+          <strong>EP-01</strong>
+          Garra Paralela – Selección<br>
+          <small>Cálculo de fuerza, área y diámetro mínimo</small>
         </div>
+        <div class="data-item">
+          <strong>EP-02</strong>
+          Garra Angular – Verificación<br>
+          <small>Verificación de aptitud y presión mínima</small>
+        </div>
+        <div class="data-item">
+          <strong>EP-03</strong>
+          Mesa XY – Fuerza y Selección<br>
+          <small>Dimensionamiento de cilindros ejes X e Y</small>
+        </div>
+        <div class="data-item">
+          <strong>EP-04</strong>
+          Mesa XY – Tiempo de Ciclo<br>
+          <small>Velocidades, tiempos y ciclo total</small>
+        </div>
+        <div class="data-item">
+          <strong>EP-05</strong>
+          Diseño de Sistema Completo<br>
+          <small>Componentes, caudal y secuencia PLC</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 1: EP-01 -->
+  <div class="slide-content" id="slide-1">
+    <div class="card">
+      <div class="card-title">🔷 EP-01: Garra Paralela – Selección</div>
+      <div class="data-grid">
+        <div class="data-item"><strong>Masa</strong>m = 0.5 kg (vidrio)</div>
+        <div class="data-item"><strong>Aceleración</strong>a = 3 m/s²</div>
+        <div class="data-item"><strong>Presión</strong>P = 5.5 bar = 550,000 Pa</div>
+        <div class="data-item"><strong>Factor Seg.</strong>FS = 2.0</div>
+        <div class="data-item"><strong>Rendimiento</strong>η = 0.82</div>
+      </div>
+      <h3 style="color:var(--dark-blue);margin-top:20px;">(a) Fuerza Mínima Requerida</h3>
+      <div class="formula-box">F<sub>req</sub> = FS · m · (g + a) = 2.0 × 0.5 × (9.81 + 3) = 12.81 N</div>
+      <div class="result-box">✓ F<sub>req</sub> = 12.81 N</div>
+
+      <h3 style="color:var(--dark-blue);margin-top:20px;">(b) Área Mínima del Pistón</h3>
+      <div class="formula-box">A<sub>min</sub> = F<sub>req</sub> / (P · η) = 12.81 / (550,000 × 0.82) = 2.84 × 10⁻⁵ m² = 28.4 mm²</div>
+      <div class="result-box">✓ A<sub>min</sub> = 28.4 mm²</div>
+
+      <h3 style="color:var(--dark-blue);margin-top:20px;">(c) Diámetro Mínimo</h3>
+      <div class="formula-box">D<sub>min</sub> = √(4 · A<sub>min</sub> / π) = √(4 × 2.84×10⁻⁵ / 3.1416) = 0.00601 m = 6.01 mm</div>
+      <div class="result-box">✓ D<sub>min</sub> = 6.01 mm</div>
+      <div class="conclusion-box">📌 Selección comercial: cilindro Ø8 mm, Ø10 mm o Ø12 mm</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: EP-02 -->
+  <div class="slide-content" id="slide-2">
+    <div class="card">
+      <div class="card-title">🔷 EP-02: Garra Angular – Verificación</div>
+      <div class="data-grid">
+        <div class="data-item"><strong>Diámetro</strong>D = 25 mm</div>
+        <div class="data-item"><strong>Presión</strong>P = 4 bar = 400,000 Pa</div>
+        <div class="data-item"><strong>Rendimiento</strong>η = 0.78</div>
+        <div class="data-item"><strong>Coef. Trans.</strong>K = 0.65</div>
+        <div class="data-item"><strong>Masa</strong>m = 2 kg</div>
+        <div class="data-item"><strong>Aceleración</strong>a = 5 m/s²</div>
+      </div>
+      <h3 style="color:var(--dark-blue);margin-top:20px;">Paso 1: Fuerza Teórica</h3>
+      <div class="formula-box">F<sub>teo</sub> = P · (π/4) · D² = 400,000 × 0.7854 × 0.000625 = 196.35 N</div>
+      <div class="result-box">✓ F<sub>teo</sub> = 196.35 N</div>
+
+      <h3 style="color:var(--dark-blue);margin-top:20px;">Paso 2: Fuerza Real en Mordaza</h3>
+      <div class="formula-box">F<sub>suj</sub> = F<sub>teo</sub> × η × K = 196.35 × 0.78 × 0.65 = 99.55 N</div>
+      <div class="result-box">✓ F<sub>suj</sub> = 99.55 N</div>
+
+      <h3 style="color:var(--dark-blue);margin-top:20px;">Paso 3: Fuerza Requerida</h3>
+      <div class="formula-box">F<sub>req</sub> = FS · m · (g + a) = 2.0 × 2 × (9.81 + 5) = 59.24 N</div>
+      <div class="result-box">✓ F<sub>req</sub> = 59.24 N</div>
+
+      <h3 style="color:var(--dark-blue);margin-top:20px;">Paso 4: Verificación</h3>
+      <div class="formula-box">F<sub>suj</sub> = 99.55 N ≥ F<sub>req</sub> = 59.24 N</div>
+      <div class="result-box">✅ SÍ ES APTA — La garra cumple con el requerimiento</div>
+      <div class="formula-box">FS<sub>real</sub> = 99.55 / 59.24 = 1.68 | P<sub>min</sub> = 2.38 bar</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: EP-03 -->
+  <div class="slide-content" id="slide-3">
+    <div class="card">
+      <div class="card-title">🔷 EP-03: Mesa XY – Fuerza y Selección</div>
+      <div class="data-grid">
+        <div class="data-item"><strong>Presión</strong>P = 6 bar = 600,000 Pa</div>
+        <div class="data-item"><strong>Rendimiento</strong>η = 0.90</div>
+        <div class="data-item"><strong>FS</strong>2.0</div>
+        <div class="data-item"><strong>Masa</strong>8 kg (cada eje)</div>
+        <div class="data-item"><strong>Aceleración</strong>1.5 m/s²</div>
+      </div>
+      <h3 style="color:var(--dark-blue);margin-top:20px;">Eje X</h3>
+      <div class="formula-box">F<sub>reqX</sub> = 2.0 × 8 × (9.81 + 1.5) = 180.96 N</div>
+      <div class="formula-box">A<sub>minX</sub> = 180.96 / 540,000 = 335 mm² | D<sub>minX</sub> = 20.65 mm</div>
+      <div class="result-box">✓ F<sub>realX</sub> (Ø25mm) = 265.1 N > 180.96 N → CUMPLE</div>
+
+      <h3 style="color:var(--dark-blue);margin-top:20px;">Eje Y</h3>
+      <div class="formula-box">F<sub>reqY</sub> = 180.96 N | D<sub>minY</sub> = 20.65 mm</div>
+      <div class="result-box">✓ F<sub>realY</sub> (Ø25mm) = 265.1 N</div>
+
+      <table>
+        <tr><th>Eje</th><th>D mínimo</th><th>D elegido</th><th>F real</th></tr>
+        <tr><td>X</td><td>20.65 mm</td><td>25 mm</td><td>265.1 N</td></tr>
+        <tr><td>Y</td><td>20.65 mm</td><td>25 mm</td><td>265.1 N</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: EP-04 -->
+  <div class="slide-content" id="slide-4">
+    <div class="card">
+      <div class="card-title">🔷 EP-04: Mesa XY – Tiempo de Ciclo</div>
+      <div class="data-grid">
+        <div class="data-item"><strong>Q<sub>X</sub></strong>20 L/min = 3.333×10⁻⁴ m³/s</div>
+        <div class="data-item"><strong>Q<sub>Y</sub></strong>12 L/min = 2.0×10⁻⁴ m³/s</div>
+        <div class="data-item"><strong>D<sub>X</sub></strong>50 mm</div>
+        <div class="data-item"><strong>D<sub>Y</sub></strong>40 mm</div>
+        <div class="data-item"><strong>Carrera X</strong>400 mm</div>
+        <div class="data-item"><strong>Carrera Y</strong>200 mm</div>
+      </div>
+      <h3 style="color:var(--dark-blue);margin-top:20px;">(a) Velocidades</h3>
+      <div class="formula-box">v<sub>X</sub> = Q<sub>X</sub>/A<sub>X</sub> = 3.333×10⁻⁴ / 1.9635��10⁻³ = 0.170 m/s</div>
+      <div class="formula-box">v<sub>Y</sub> = Q<sub>Y</sub>/A<sub>Y</sub> = 2.0×10⁻⁴ / 1.2566×10⁻³ = 0.159 m/s</div>
+      <div class="result-box">✓ v<sub>X</sub> = 0.170 m/s | v<sub>Y</sub> = 0.159 m/s</div>
+
+      <h3 style="color:var(--dark-blue);margin-top:20px;">(b) Tiempos de Desplazamiento</h3>
+      <div class="formula-box">t<sub>X</sub> = 0.4/0.170 + 0.02 = 2.373 s | t<sub>Y</sub> = 0.2/0.159 + 0.02 = 1.278 s</div>
+      <div class="result-box">✓ t<sub>X</sub> = 2.373 s | t<sub>Y</sub> = 1.278 s</div>
+
+      <h3 style="color:var(--dark-blue);margin-top:20px;">(c) Tiempo Total de Ciclo</h3>
+      <div class="formula-box">T<sub>ciclo</sub> = t<sub>X</sub> + t<sub>Y</sub> + t<sub>Y</sub> = 2.373 + 1.278 + 1.278 = 4.929 s</div>
+      <div class="result-box">✓ T<sub>ciclo</sub> = 4.93 s (ciclo parcial: X+ → Y+ → Y-)</div>
+      <div class="formula-box">T<sub>total</sub> (incluyendo X-) = 2.373 + 1.278 + 1.278 + 2.373 = 7.302 s</div>
+      <div class="conclusion-box">📌 Ciclo completo (ida y vuelta): T<sub>total</sub> = 7.30 s</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: EP-05 -->
+  <div class="slide-content" id="slide-5">
+    <div class="card">
+      <div class="card-title">🔷 EP-05: Diseño de Sistema Completo</div>
+      <h3 style="color:var(--dark-blue);">Requisitos</h3>
+      <div class="data-grid">
+        <div class="data-item"><strong>Garra</strong>Para piezas de 1.5 kg</div>
+        <div class="data-item"><strong>Mesa XY</strong>Carrera X=250mm, Y=150mm</div>
+        <div class="data-item"><strong>Velocidad</strong>0.4 m/s</div>
+      </div>
+
+      <h3 style="color:var(--dark-blue);margin-top:20px;">Paso 1: Garra</h3>
+      <div class="formula-box">F<sub>req</sub> = 38.43 N | A<sub>min</sub> = 75.4 mm² | D<sub>min</sub> = 9.8 mm</div>
+      <div class="conclusion-box">📌 Selección: Garra Ø12-16 mm</div>
+
+      <h3 style="color:var(--dark-blue);margin-top:20px;">Paso 2: Cilindros XY</h3>
+      <div class="formula-box">F<sub>req</sub> = 33.93 N | D<sub>min</sub> = 9.2 mm</div>
+      <div class="conclusion-box">📌 Selección: Cilindros Ø16 mm, carreras 250mm/150mm</div>
+
+      <h3 style="color:var(--dark-blue);margin-top:20px;">Paso 3: Caudal</h3>
+      <div class="formula-box">Q = v × A = 0.4 × 1.13×10⁻⁴ = 4.52×10⁻⁵ m³/s = 2.71 L/min</div>
+      <div class="result-box">✓ Q = 2.71 L/min por cilindro</div>
     </div>
 
-    <script src="script.js"></script>
+    <div class="card">
+      <div class="card-title">📋 Lista de Componentes</div>
+      <table>
+        <tr><th>Componente</th><th>Especificación</th><th>Cant.</th></tr>
+        <tr><td>Compresor</td><td>8 bar, 50 L/min, tanque 30 L</td><td>1</td></tr>
+        <tr><td>Unidad FRL</td><td>Filtro 5µm, Regulador 0-8 bar, Lubricador</td><td>1</td></tr>
+        <tr><td>Válvula aislamiento</td><td>Corte manual con candado (LOTO)</td><td>1</td></tr>
+        <tr><td>Válvula garra</td><td>5/2 biestable, falla segura cerrada, 24VDC</td><td>1</td></tr>
+        <tr><td>Válvula eje X</td><td>5/2 monoestable, 24VDC, t<20ms</td><td>1</td></tr>
+        <tr><td>Válvula eje Y</td><td>5/2 monoestable, 24VDC</td><td>1</td></tr>
+        <tr><td>Reguladores caudal</td><td>Meter-Out ajustable 0-30 L/min</td><td>4</td></tr>
+        <tr><td>Cilindro X</td><td>ISO 6432, Ø16mm, carrera 250mm, DE</td><td>1</td></tr>
+        <tr><td>Cilindro Y</td><td>ISO 6432, Ø16mm, carrera 150mm, DE</td><td>1</td></tr>
+        <tr><td>Garra paralela</td><td>Ø16mm, carrera mordaza 10-20mm</td><td>1</td></tr>
+        <tr><td>Sensores magnéticos</td><td>PNP, 24VDC, finales de carrera</td><td>6</td></tr>
+        <tr><td>Presostato</td><td>Ajustable 1-8 bar, salida digital</td><td>1</td></tr>
+        <tr><td>PLC</td><td>8 ED, 6 SD, 24VDC</td><td>1</td></tr>
+        <tr><td>Silenciadores</td><td>Para puertos escape 3 y 5</td><td>3</td></tr>
+        <tr><td>Tubería</td><td>Poliuretano 6mm o 8mm</td><td>Según layout</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🔁 Secuencia de Control PLC</div>
+      <div class="formula-box" style="text-align:left;">
+        <span class="step-number">1</span>Inicio → Esperar pulsador<br>
+        <span class="step-number">2</span>Activar válvula garra (cierra) → esperar 100ms<br>
+        <span class="step-number">3</span>Activar válvula eje X+ → esperar sensor X+<br>
+        <span class="step-number">4</span>Activar válvula eje Y+ → esperar sensor Y+<br>
+        <span class="step-number">5</span>Operación → temporizador 500ms<br>
+        <span class="step-number">6</span>Activar válvula eje Y- → esperar sensor Y-<br>
+        <span class="step-number">7</span>Activar válvula eje X- → esperar sensor X-<br>
+        <span class="step-number">8</span>Desactivar válvula garra (abre) → Fin ciclo
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Diseño de Sistemas Neumáticos | Resolución Completa de Ejercicios | 2026<br>
+    <small>Presentación interactiva con CSS/JS</small>
+  </div>
+</div>
+
+<script>
+let currentSlide = 0;
+const totalSlides = 6;
+
+function showSlide(index) {
+  // Update tabs
+  document.querySelectorAll('.nav-tab').forEach((tab, i) => {
+    tab.classList.toggle('active', i === index);
+  });
+
+  // Update content
+  document.querySelectorAll('.slide-content').forEach((slide, i) => {
+    slide.classList.toggle('active', i === index);
+  });
+
+  currentSlide = index;
+  updateProgress();
+
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateProgress() {
+  const progress = ((currentSlide + 1) / totalSlides) * 100;
+  document.getElementById('progressBar').style.width = progress + '%';
+}
+
+function printPresentation() {
+  window.print();
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+    if (currentSlide < totalSlides - 1) showSlide(currentSlide + 1);
+  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    if (currentSlide > 0) showSlide(currentSlide - 1);
+  }
+});
+
+// Touch/swipe support for mobile
+let touchStartX = 0;
+let touchEndX = 0;
+
+document.addEventListener('touchstart', (e) => {
+  touchStartX = e.changedTouches[0].screenX;
+});
+
+document.addEventListener('touchend', (e) => {
+  touchEndX = e.changedTouches[0].screenX;
+  handleSwipe();
+});
+
+function handleSwipe() {
+  const swipeThreshold = 50;
+  if (touchEndX < touchStartX - swipeThreshold && currentSlide < totalSlides - 1) {
+    showSlide(currentSlide + 1);
+  }
+  if (touchEndX > touchStartX + swipeThreshold && currentSlide > 0) {
+    showSlide(currentSlide - 1);
+  }
+}
+
+// Initialize
+updateProgress();
+</script>
 </body>
 </html>
